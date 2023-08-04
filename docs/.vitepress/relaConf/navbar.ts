@@ -9,7 +9,7 @@ export const nav: DefaultTheme.NavItem[] = [
     items: [
       {
         text: '深入浅出JavaScript',
-        link: '/column/JavaScript/' // 对应docs/column/Algorithm下的idnex.md文件
+        link: '/column/JavaScript/' // 对应docs/column/Algorithm下的index.md文件
       }
     ]
   },

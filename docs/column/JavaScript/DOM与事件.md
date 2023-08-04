@@ -1,0 +1,402 @@
+# DOM与事件
+1. DOM选择器
+2. 常见的dom操作（增加，修改，删除，查找）
+3. HTMLCollection和NodeList
+4. **事件流（事件冒泡和事件捕获）**
+5. **事件处理程序**
+6. **event事件对象**
+7. 事件委托
+8. 重排与重绘
+
+## 1. DOM选择器
+```
+document.getElementById('id_name'), 通过id定位元素，返回匹配到id的第一个元素
+document.getElementsByClassName()函数，通过类名定位元素，返回匹配的元素构成的HTMLCollection对象，是一个类数组结构
+document.getElementsByName()函数，通过元素的name定位，返回匹配的元素构成的NodeList对象
+document.getElementsByTagName(),通过标签名定位元素，返回匹配元素组成的HTMLCollection对象
+
+element = baseElement.querySelector(selectors) 返回基准元素下，选择器匹配到的元素集合中的第一个元素
+实际匹配过程是创建一个匹配元素的初始列表，然后判断每个元素是否为基准元素的后代元素，第一个属于基准元素的后代元素将会被返回
+elementList = baseElement.querySelectorAll(selectors), 返回一个NodeList的集合
+```
+## 2. HTMLCollection和NodeList对象
+```
+相同点：
+1. 两者都是类数组对象，有length属性，可以通过属性操作，可以通过call/apply处理成真正的数组
+2. 都有item()函数，通过索引定位元素
+3. 都是实时性的，dom树的变化会及时反映到HTMLCollection对象和NodeList对象上，只是在某些函数调用的返回结果上会存在差异（比如querySelectorAll获取的nodeList对象就不是实时的）
+不同点
+1. HTMLCollection对象比NodeList对象多了个namedItem()函数，可以通过id或者name属性定位元素
+2. HTMLCollection对象只包含元素的集合，既具有标签名到元素，而NodeList对象是节点的集合，既包括元素，也包括节点，比如文本节点
+```
+## 3. DOM操作
+### 1.  增加节点
+```javascript
+// 新创建一个元素节点
+var newLi = document.createElement('li')
+
+// 新创建一个属性节点，并设置值
+var newLiAttr = document.createAttribute('class')
+newLiAttr.value = 'myClass'
+newLi.setAttributeNode(newLiAttr)
+// 另一种方式, 更加推荐
+newLi.setAttribute('class', 'myClass')
+
+// 新创建一个文本节点
+var newTextNode = document.createTextNode('lmy')
+// 使用appendChild函数将新增元素添加到末尾
+newLi.appendChild(newTextNode)
+// 使用insertBefore函数将节点添加到另一个节点之前
+parentNode.insertBefore(newLi2, newLi1)
+```
+### 2. 删除节点
+```javascript
+// 删除元素节点
+parentNode.removeChild(childElementNode)
+
+// 删除属性节点
+element.removeAttribute('attr')
+
+// 删除文本节点
+element.innerHTML = ''
+```
+### 3. 修改节点
+```javascript
+// 修改元素节点
+parentNode.replaceChild(newNode,oldNode) // 第一个参数是新元素，第二个参数表示被替换的旧元素
+
+// 修改属性节点
+var div = document.querySelector('#div')
+// setAttribute设置
+div.setAttribute('class', 'classA')
+// 修改属性名
+div.className = 'classA'
+
+// 修改文本节点
+element.innerHTML = '新设置的内容'
+```
+## 4. 事件流
+事件流描述的是从页面中接收事件的顺序，事件发生后会在目标节点和根节点之间按照特定的顺序传播，路径经过的节点都会接受到事件 
+**一个完整的事件流实际上包含了3个阶段，事件捕获阶段 ---> 事件目标阶段 ---> 事件冒泡阶段**
+```
+事件捕获阶段的主要表现是不具体的节点先接受事件，然后逐级向下传递，最具体的节点最后收到事件
+事件目标阶段表示事件刚好传播到用户产生行为的元素上，可能是事件捕获的最后一个阶段，也可能是事件冒泡的第一个阶段
+事件冒泡阶段的主要表现是最具体的元素先接受事件，然后逐级向上传播，不具体的节点最后接收事件
+
+使用addEventListener函数绑定的事件在默认的情况下，即第三个参数默认为false的时候。按照事件冒泡型事件流进行处理
+将第三个参数设置为true,就会更改为捕获型事件流
+完整的事件流是按照事件捕获，事件目标， 事件冒泡阶段依次执行的，如果有元素绑定了捕获类型事件，则会优先于冒泡类型事件进行执行
+```
+```javascript
+btn.addEventListener('click', function() {}, true) // 默认为false
+```
+```html
+<body>
+  <table border="1">
+    <tbody>
+      <tr>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <script>
+    var table = document.getElementsByTagName('table')[0]
+    var tbody = document.getElementsByTagName('tbody')[0]
+    var tr = document.getElementsByTagName('tr')[0]
+    var td = document.getElementsByTagName('td')[0]
+
+    table.addEventListener('click', function() {
+      console.log('table触发')
+    })
+    tbody.addEventListener('click', function() {
+      console.log('tbody触发')
+    }, true)
+    tr.addEventListener('click', function() {
+      console.log('tr触发')
+    }, true)
+    td.addEventListener('click', function() {
+      console.log('td触发')
+    })
+
+</script>
+</body>
+```
+## 5. 事件处理程序
+事件处理程序分为DOM0、DOM2、DOM3这3种级别的事件处理程序 
+### 1. DOM0级事件处理程序
+DOM0级事件处理程序是将一个函数赋值给一个事件处理属性，有两种表现形式
+```javascript
+// 第一种是先获取dom元素，然后将函数赋值给对应的事件属性
+var btn = document.getElementById('btn')
+btn.onclick = function () {}
+
+// 第二种直接在html中设置对应事件属性的值
+<button onClick="clickFn()">点击</button>
+
+// 当两种同时存在时，第一种在js中定义的事件处理程序会覆盖掉后面在html标签中定义的事件处理程序
+// DOM0级事件处理程序只支持事件冒泡阶段
+/*
+优点：简单且可以跨浏览器
+缺点：一个事件处理程序只能绑定一个函数
+*/
+
+// 如果需要删除元素绑定的事件，只需要将对应的事件处理程序设置为null即可
+btn.onclick = null
+```
+### 2. DOM2级事件处理程序
+在DOM2级事件处理程序中，当事件发生在节点时，目标元素的事件处理函数就会被触发，而且目标元素的每个祖先节点也会按照事件流顺序 触发对应的事件处理程序，DOM2级事件处理方式规定了添加事件处理程序和删除事件处理程序的方法
+```javascript
+// 在IE10及其以下版本，只支持事件冒泡阶段
+// 可以通过attachEvent函数添加事件处理程序，通过detachEvent函数删除事件处理程序
+element.attachEvent("on" + eventName, handler) // 添加事件处理程序
+element.detachEvent("on" + eventName, handler) // 删除事件处理程序
+
+// 在IE11和其他浏览器中，支持事件冒泡和事件捕获
+addEventListener(eventName, handler, useCapture)
+removeEventListener(eventName, handler, useCapture)
+// useCapture表示是否支持事件捕获，true表示的是支持捕获，false表示支持事件冒泡,默认为false
+```
+```
+两者的相同和区别：
+相同点
+1. 支持对同一个事件绑定多个处理函数
+2. 在需要删除绑定的事件时，不能删除匿名函数，因为添加和删除的必须是同一个函数
+不同点
+1. 在IE浏览器中，使用attchEvent函数为同一个事件添加多个事件处理函数的时候，会按照添加的相反顺序执行
+2. 在IE浏览器中，使用attachEvent函数添加的事件处理程序会在全局作用域中运行，因此this指向全局作用域window, 在非IE浏览器下，使用addEventListener函数添加的事件处理程序在指定的元素内部执行，因为this指向绑定的元素
+```
+```javascript
+// 封装处理
+var EventUtil = {
+  addEventHandler: function (element, type, handler) {
+    if (element.addEventListener) {
+      element.addEventListener(type, handler);
+    } else if (element.attachEvent) {
+      element.attachEvent("on" + type, handler);
+    } else {
+      element["on" + type] = handler;
+    }
+  },
+  removeEventHandler: function (element, type, handler) {
+    if (element.removeEventListener) {
+      element.removeEventListener(type, handler)
+    } else if (element.detachEvent) {
+      element.detachEvent("on" + type, handler)
+    } else {
+      element["on" + type] = null;
+    }
+  }
+}
+```
+### 3. DOM3级事件处理程序
+DOM3级事件处理程序是在DOM2级事件的基础上重新定义了事件，也添加了一些新的事件，最重要的区别在于DOM3级事件处理程序允许自定义事件，自定义事件由createEvent('CustomEvent")函数创建，返回的对象有一个initCustomEvent函数，通过传递对应的参数可以自定义事件
+```
+函数可以接收以下四个参数
+1. type: 字符串，触发的事件类型，自定义
+2. bubble: 布尔值，表示是否可以冒泡
+3. cancelable: 布尔值，表示是否可以取消
+4. detail: 对象，任意值，保存在event对象的detail属性中
+创建完成的自定义事件，可以通过dispatchEvent函数去手动触发，触发自定义事件的元素需要和绑定自定义事件的元素为同一个元素
+```
+```javascript
+<body>
+  <div id="watchDiv">
+    监听自定义事件的div元素
+  </div>
+  <button id="btn">按钮</button>
+  <script>
+    // 判断是否支持DOM3级事件处理程序
+    // console.log(document.implementation.hasFeature('CustomEvents', '3.0'))
+
+    var customEvent
+    (function () {
+      if (document.implementation.hasFeature('CustomEvents', '3.0')) {
+        var detailData = { name: 'lmy' }
+        customEvent = document.createEvent('CustomEvent')
+        // 第二个参数设置为false,表示不支持事件冒泡
+        customEvent.initCustomEvent('myEvent', true, false, detailData)
+      }
+    })()
+    var div = document.getElementById('watchDiv')
+    div.addEventListener('myEvent', function (e) {
+      console.log('div监听到自定义事件', e.detail)
+    })
+    document.addEventListener('myEvent', function (e) {
+      console.log('document监听到自定义事件', e.detail)
+    })
+    
+    var btn = document.getElementById('btn')
+    btn.addEventListener('click', function () {
+      // 触发自定义事件
+      div.dispatchEvent(customEvent)
+    })
+  </script>
+</body>
+```
+## 6. Event对象 
+### 1. 获取event对象 
+每触发一个事件，都会产生一个event对象，该对象包括所有与事件相关的信息，包括事件的元素，事件的类型及其他与特定事件相关的信息
+```javascript
+btn.addEventListener('click', function (e) {
+  // 1. event作为参数传入
+  console.log(e)
+  // 2. 通过window.event获取
+  var winEvent = window.event
+  console.log(winEvent)
+  console.log(winEvent === e)  // true
+})
+
+```
+### 2. 获取事件的目标元素
+```javascript
+btn.addEventListener("click", function (event) {
+  var target = event.target  // 非IE下获取事件的目标程序
+  var IEtarget = event.srcElement  // IE下获取事件的目标程序
+  console.log(target)
+  console.log(IEtarget)
+})
+```
+### 3. target和currentTarget
+```
+在事件流的任何阶段，target始终指向的是实际操作的元素
+在事件流的事件捕获或者事件冒泡阶段，currentTarget指向的是事件流所处的某个阶段对应的目标元素
+在事件目标阶段，currentTarget属性指向的也是实际操作的元素，只有在事件目标阶段，target属性和currentTarget属性才指向同一个元素
+```
+### 4. 阻止事件冒泡
+举个简单的例子，由于事件冒泡的存在，单击子元素button的时候，事件会冒泡到父元素上，因为也会触发父元素的事件，这个时候就需要阻止事件冒泡
+```javascript
+btn.addEventListener('click', function (event) {
+    // 阻止事件冒泡
+    event.stopPropagation()
+    // 真实操作
+    console.log('btn点击事件')
+})
+```
+stopPropagation()函数仅仅会阻止事件冒泡，其他事件处理程序依然可以调用 
+stopImmediatePropagation()函数不仅会阻止冒泡，也会阻止(当前元素绑定的其他，阻止事件冒泡之后的其他事件）事件处理程序的调用
+### 5. 阻止默认行为
+在众多的HTML标签中，有一些标签是具有默认行为的，比如a标签单击后会默认跳转到href指定的链接中，可以通过**event.preventDefault**来阻止事件的默认行为
+## 7. 事件委托
+**事件委托机制的主要思想是将事件绑定到父元素上，利用事件冒泡原理，当事件进入到冒泡阶段，通过绑定在父元素的事件对象来判断当前事件流正在进行的元素，如果和期望的元素相同，则执行相应的事件代码**
+```javascript
+<body>
+  <ul>
+    <li>文本1</li>
+    <li>文本2</li>
+    <li>文本3</li>
+    <li>文本4</li>
+    <li>文本5</li>
+  </ul>
+  <script>
+    /*
+    // 1. 获取所有的li标签
+    var lis = document.querySelectorAll('li')
+    for(var i = 0; i < lis.length; i++) {
+      lis[i].addEventListener('click', function() {
+        console.log(this.innerText)
+      })
+    }
+    */
+    // 事件处理程序过多导致页面交互时间过长（dom节点交互，引起浏览器重排与重绘）
+    // 事件处理程序过多导致内存占用过多
+
+    var parent = document.querySelector('ul')
+    parent.addEventListener('click', function (event) {
+      var target = event.target
+      if(target.nodeName.toLowerCase() === 'li') {
+        console.log(target.innerText)
+      }
+    })
+  </script>
+</body>
+
+```
+## 8. 常见事件
+```
+在js中有一系列常用的事件类型
+- 焦点相关的focus, blur等事件
+- 单击相关的click, dbclick, contextmenu等事件
+- 鼠标相关的mouseover,mouseout, mouseenter等事件
+- 键盘相关的keydown, keypress, keyup等事件
+- 拖拽相关的drag事件
+- 移动端touch事件
+```
+## 9. 浏览器重排与重绘
+```
+浏览器渲染HTML的过程？
+1. HTML文件被HTML解析器解析成对应的DOM树，CSS样式文件被CSS解析器解析生成对应的样式规则集
+2. DOM树和CSS样式解析完成后，附加在一起形成一个渲染树
+3. 节点信息的计算，即根据渲染树计算每个节点的几何信息
+4. 渲染绘制，根据计算完成的节点信息绘制整个页面
+
+```
+### 1. 重排
+> 简单的理解，重排会重新计算dom结构的几何信息
+
+```
+浏览器渲染页面是基于流式布局的，对某一个dom节点信息进行修改时，就需要对该dom结构进行重新计算，该dom结构的修改会决定周边dom结构的更改范围，主要分为全局范围和局部范围
+而重排的过程就发生在dom节点信息修改的时候，重排实际上是依据渲染树中每个渲染对象的信息，计算出各自渲染对象的几何信息，例如dom元素的位置，尺寸，大小等，然后将其安置在界面中正确的位置
+重排是一种明显的改变页面布局的操作，下面总结了常见的引起重排的操作
+- 页面首次渲染
+- 浏览器窗口大小发生变化
+- 元素尺寸或者位置发生改变
+- 元素内容发生变化
+- 元素字体发生变化
+- 添加或删除可见的dom元素
+- 获取某些特定的属性
+也许几行简单的js代码就会引起很多重排的操作，而频繁的重排操作会对浏览器引擎造成很大的消耗，所以浏览器不会针对每个js操作都进行一次重排，而是会维护一个引起重排操作的队列，等队列中的操作达到了一定的数量或者到了一定的时间间隔后，浏览器才会去flush一次队列，进行真正的重排操作
+虽然浏览器有这个优化，但是我们写的一些代码可能会强制浏览器提前flush队列，比如获取以下的样式信息
+- offsetTop/Left/Width/Height
+- scrollTop/Left/Width/Height
+- clientTop/Left/Width/Height
+- width/height
+- 调用getComputedStyle()函数
+当我们请求以上这些属性时，浏览器为了返回最精准的信息。需要flush队列，因为队列中的某些操作可能会影响某些值的获取，因此，即使你获取的样式信息与队列中的操作无关，浏览器依然会强制flush队列，从而引起浏览器重排的操作
+
+```
+### 2. 重绘
+重绘只是改变元素在页面中的展现样式，而不会引起元素在文档流中位置的改变，例如更改了元素的字体颜色，背景色，透明度等，浏览器均会将这些样式赋予元素并重新绘制
+```latex
+在修改某些常见的属性时，会引起重绘的操作
+- color
+- border-style
+- visibility
+- background
+- text-decoration
+- outline
+- border-radius
+- box-shdow
+```
+**简单的说，重排一定会引起重绘的操作，但是重回不一定引起重排的操作**
+因为在元素重排的过程中，元素的位置等几何信息会重新计算，并引起元素的重新渲染，这就会产生重绘的操作，而在重绘时，只是改变了元素的展现样式，而不会引起元素在文档流中位置的改变，所以不会引起重排的操作
+### 3. 性能优化
+```
+1. 将多次改变样式的属性操作合并为一次
+当多次修改元素的样式时可以改为替元素添加类名
+2. 将需要多次重排的元素设置为绝对定位
+如果需要多次重排的元素不在文档流中，那么它的变化就不会影响到其他元素的变哈，这样就不会引起重排的变化，常见的操作就是将其设置为固定定位或绝对定位
+3. 在内存中多次操作节点，完成后再添加到文档树中
+4. 将要进行复杂处理的元素处理为display属性为none,处理完成后再进行显示
+5. 将频繁获取绘引起重排的属性缓存至变量
+var width = element.style.width
+6. 利用事件委托绑定事件处理程序
+7. 利用DocumentFragment操作DOM节点
+核心点在于它不是真实DOM树的一部分，它的变化不会引起DOM树重新渲染的操作，也就不会引起浏览器重排和重绘的操作，从而带来性能上的提升
+- 第一步：将需要变更的dom元素放在一个新建documentFragment中
+- 第二步：将documentfragment添加到文档树中
+```
+```javascript
+var list = document.querySelector('#list')
+// 1. 新创建一个DocumentFragment对象
+var fragment = new document.createDocumentFragment()
+for (var i = 0; i <= 100; i++) {
+    var li = document.createElement('li')
+    var text = document.createTextNode('节点' + i)
+    li.append(text)
+    // 将新增的元素添加到DocumentFragment对象中
+    fragment.append(li)
+}
+// 处理DocumentFragment对象
+list.append(fragment)
+// 只会引发一次重排操作，提高渲染性能
+```

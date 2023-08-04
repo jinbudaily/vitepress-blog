@@ -1,13 +1,17 @@
-> > 1. DOM元素进行事件绑定中的this(指向DOM实例）
-> 2. 函数执行中的this（自执行函数&回调函数）
-> 3. new和构造函数
-> 4. **箭头函数没有自己的this**
-> 5. 如何改变this: call/bind/apply
-> 
+# this是谁？
+
+
+
+1. DOM元素进行事件绑定中的this(指向DOM实例）
+2. 函数执行中的this（自执行函数&回调函数）
+3. new和构造函数
+4. **箭头函数没有自己的this**
+5. 如何改变this: call/bind/apply
+
 总结：在js中，this指向函数的调用者
 
 ## 1. this的几种基本情况
-:::warning
+::: info
 this是当前环境执行上下文对象中的一个属性
 this在不同的环境下，有不同的的指向，在全局作用域下，this指向全局对象
 不同环境下的全局对象：
@@ -122,7 +126,7 @@ fn(4);
 // this为window window.x = window.x * ((++13) + 4) = 13 * 18 = 234
 console.log(obj.x, x); // 95 234
 ```
-![Xnip2021-11-21_17-35-27.jpg](https://cdn.nlark.com/yuque/0/2021/jpeg/1863325/1638981216577-a4776f35-3757-4e94-a75e-634bf014035e.jpeg#averageHue=%23faf8f7&clientId=uc23077d2-8428-4&from=paste&height=1450&id=ud28d0777&originHeight=1450&originWidth=2588&originalType=binary&ratio=1&rotation=0&showTitle=false&size=644939&status=done&style=none&taskId=u1041d2df-e998-4f22-8eff-8f8032c266b&title=&width=2588)
+![Xnip2021-11-21_17-35-27.jpg](../../public/img/1638981216577-a4776f35-3757-4e94-a75e-634bf014035e.png)
 ```javascript
 function f(k) {
 	this.m = k
