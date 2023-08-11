@@ -1,0 +1,1 @@
+import{_ as e,v as t,b as n}from"./chunks/framework.e2f4824a.js";const p=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"column/算法/index.md","filePath":"column/算法/index.md"}'),a={name:"column/算法/index.md"};function s(r,o,c,d,i,m){return t(),n("div")}const f=e(a,[["render",s]]);export{p as __pageData,f as default};
