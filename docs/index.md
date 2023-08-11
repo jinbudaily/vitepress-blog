@@ -21,10 +21,10 @@ hero:
     # 按钮相关
     actions:
     - theme: brand
-      text: 进入主页
-      link: /column/views/guide
+      text: 前端编程之旅
+      link: /column/views/
     - theme: alt
-      text: 个人成长
+      text: 我的个人成长
       link: /column/Growing/
 # 按钮下方的描述
 features:
