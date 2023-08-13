@@ -22,7 +22,7 @@ export default defineConfig({
       provider: 'local'
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/jinbudaily/vitepress-blog' }
     ],
     footer: {
       message: 'MIT License | 版权所有 ',

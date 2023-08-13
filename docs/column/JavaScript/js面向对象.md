@@ -13,7 +13,6 @@
      - 构造call继承
      - 寄生组合继承
      - class继承
-7. 深拷贝与浅拷贝（详情见下一期）
 
 ## 1. 面向对象基础
 JS中的每一个东西，都是我们要研究的【对象】，按照功能特点进行分【类】 ，拿出类中具体的某个事物，称为【实例】
@@ -291,7 +290,7 @@ alert((new C1().name) + (new C2().name) + (new C3().name)); // Tomundefinedjoin
       - filter
       - flat
 3.  Object内置构造函数：里面也有静态的工具类属性和方法 
-   - assign/defineProperty/keys/getPropertyOf/getOwnPropertyNames
+   - `assign/defineProperty/keys/getPropertyOf/getOwnPropertyNames`
 4.  Object.property原型对象：公共属性和方法 
    - hasOwnProperty
    - isPropertyOf
@@ -299,7 +298,7 @@ alert((new C1().name) + (new C2().name) + (new C3().name)); // Tomundefinedjoin
    - toString
    - valueOf
 5.  Fcuntion内置构造函数 
-6. ** Function.prototype是一个匿名函数（而其他构造函数的原型对象都是普通对象））**，虽说是个函数，但是和其他原型对象操作相同 
+6. **Function.prototype是一个匿名函数（而其他构造函数的原型对象都是普通对象)**，虽说是个函数，但是和其他原型对象操作相同 
    - apply/call/bind
    - toString
    - Symbol.hasInstance

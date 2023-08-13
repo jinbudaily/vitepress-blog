@@ -4,6 +4,10 @@ export const JsSidebar = [
         text: 'JavaScript核心语法',
         items: [
             {
+                text: 'JS语法基础',
+                link: '/column/JavaScript/JS语法基础'
+            },
+            {
                 text: '数据类型与堆栈内存',
                 link: '/column/JavaScript/数据类型与堆栈内存'
             },
@@ -34,6 +38,10 @@ export const JsSidebar = [
             {
                 text: 'js面向对象',
                 link: '/column/JavaScript/js面向对象'
+            },
+            {
+                text: '一道经典的函数面试题',
+                link: '/column/JavaScript/一道经典的函数面试题'
             },
             {
                 text: '异步编程',
