@@ -25,3 +25,12 @@
     --vp-c-brand-dark: var(--vp-c-purple-dark);
     --vp-c-brand-darker: var(--vp-c-purple-darker);
   }
+
+.vp-doc blockquote {
+  line-height: 40px;
+  background-color: #f9f7f3;
+}
+.vp-doc blockquote > p {
+  /* line-height: inherit; */
+  line-height: 40px;
+}

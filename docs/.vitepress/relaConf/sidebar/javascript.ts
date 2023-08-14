@@ -44,6 +44,10 @@ export const JsSidebar = [
                 link: '/column/JavaScript/一道经典的函数面试题'
             },
             {
+                text: '错误类型和严格模式',
+                link: '/column/JavaScript/错误类型和严格模式'
+            },
+            {
                 text: '异步编程',
                 link: '/column/JavaScript/异步编程'
             },
