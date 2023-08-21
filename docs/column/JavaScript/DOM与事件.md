@@ -9,26 +9,68 @@
 8. 重排与重绘
 
 ## 1. DOM选择器
-```
+
+:::info
+
 document.getElementById('id_name'), 通过id定位元素，返回匹配到id的第一个元素
 document.getElementsByClassName()函数，通过类名定位元素，返回匹配的元素构成的HTMLCollection对象，是一个类数组结构
 document.getElementsByName()函数，通过元素的name定位，返回匹配的元素构成的NodeList对象
-document.getElementsByTagName(),通过标签名定位元素，返回匹配元素组成的HTMLCollection对象
+document.getElementsByTagName(),通过标签名定位元素，返回匹配元素组成的`HTMLCollection`对象
 
 element = baseElement.querySelector(selectors) 返回基准元素下，选择器匹配到的元素集合中的第一个元素
 实际匹配过程是创建一个匹配元素的初始列表，然后判断每个元素是否为基准元素的后代元素，第一个属于基准元素的后代元素将会被返回
-elementList = baseElement.querySelectorAll(selectors), 返回一个NodeList的集合
+elementList = baseElement.querySelectorAll(selectors), 返回一个`NodeList`的集合
+
+:::
+
+```js
+var oLi = document.getElementsByTagName('li')
+var oBox = document.getElementsByClassName('box')
+var oSpan = document.getElementById('box2')
+var box = document.querySelector('div')
+var allBox = document.querySelectorAll('div')
+console.log(oLi) // HTMLCollection
+console.log(oBox) // HTMLCollection
+console.log(oSpan)
+console.log(box)
+console.log(allBox) // NodeList
 ```
+
 ## 2. HTMLCollection和NodeList对象
-```
 相同点：
 1. 两者都是类数组对象，有length属性，可以通过属性操作，可以通过call/apply处理成真正的数组
 2. 都有item()函数，通过索引定位元素
-3. 都是实时性的，dom树的变化会及时反映到HTMLCollection对象和NodeList对象上，只是在某些函数调用的返回结果上会存在差异（比如querySelectorAll获取的nodeList对象就不是实时的）
-不同点
-1. HTMLCollection对象比NodeList对象多了个namedItem()函数，可以通过id或者name属性定位元素
-2. HTMLCollection对象只包含元素的集合，既具有标签名到元素，而NodeList对象是节点的集合，既包括元素，也包括节点，比如文本节点
+3. 都是实时性的，dom树的变化会及时反映到HTMLCollection对象和NodeList对象上，只是在某些函数调用的返回结果上会存在差异（比如**querySelectorAll获取的nodeList对象就不是实时的**）
+
+```js
+var divs = document.querySelectorAll('div')
+console.log(divs)
+divs[0].remove()
+console.log(divs)
+console.log(divs.length)
 ```
+
+不同点: 
+
+1. HTMLCollection对象比NodeList对象多了个namedItem()函数，可以通过id或者name属性定位元素
+2. HTMLCollection对象是只包含元素的集合，而NodeList对象是节点的集合，既包括元素，也包括节点，比如文本节点
+
+## 3. 节点和元素
+
+节点具有多种类型：比如`元素节点/ 属性节点/文本节点/注释节点`
+
+- `parentNode`: 某节点的父节点, 直到找到`document`为止，`        body -> html -> document -> null`
+- `childNodes`: 某节点的全部子节点
+- `firstChild/lastChild`: 某节点的第一个子节点和最后一个子节点
+- `nextSibling / previousSibling`: 某节点的上一个节点和下一个节点
+
+元素指的是标签及中间的内容，比如`<div class="box">box</div>`
+
+- `parentElement`: 父元素，直到找到`html`为止，`body -> html -> null`
+- `children`: 子元素， `childElementCount = children.length`
+- `firstElementChild/lastElementChild `: IE9以下不支持，表示第一个和最后一个子元素
+- `nextElementSibling/previousElementSibling `: IE9以下不支持，表示下一个和上一个元素
+
 ## 3. DOM操作
 ### 1.  增加节点
 ```javascript
