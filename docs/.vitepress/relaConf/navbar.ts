@@ -23,6 +23,10 @@ export const nav: DefaultTheme.NavItem[] = [
     ]
   },
   {
+    text: '🍪React',
+    link: '/column/React/'
+  },
+  {
     text: '🎨数据结构与算法',
     link: '/column/算法/'
   },

@@ -51,6 +51,12 @@ export const JsSidebar = [
                 text: '异步编程',
                 link: '/column/JavaScript/异步编程'
             },
+            
+        ]
+    },
+    {
+        text: 'DOM',
+        items: [
             {
                 text: 'DOM与事件',
                 link: '/column/JavaScript/DOM与事件'

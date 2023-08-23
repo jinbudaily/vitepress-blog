@@ -12,14 +12,17 @@
 
 :::info
 
-document.getElementById('id_name'), 通过id定位元素，返回匹配到id的第一个元素
-document.getElementsByClassName()函数，通过类名定位元素，返回匹配的元素构成的HTMLCollection对象，是一个类数组结构
-document.getElementsByName()函数，通过元素的name定位，返回匹配的元素构成的NodeList对象
-document.getElementsByTagName(),通过标签名定位元素，返回匹配元素组成的`HTMLCollection`对象
+`document.getElementById('id_name')` 通过id定位元素，返回匹配到id的第一个元素
 
-element = baseElement.querySelector(selectors) 返回基准元素下，选择器匹配到的元素集合中的第一个元素
-实际匹配过程是创建一个匹配元素的初始列表，然后判断每个元素是否为基准元素的后代元素，第一个属于基准元素的后代元素将会被返回
-elementList = baseElement.querySelectorAll(selectors), 返回一个`NodeList`的集合
+`document.getElementsByClassName()`函数，通过类名定位元素，返回匹配的元素构成的HTMLCollection对象，是一个类数组结构
+
+`document.getElementsByName()`函数，通过元素的name定位，返回匹配的元素构成的NodeList对象
+
+`document.getElementsByTagName()`,通过标签名定位元素，返回匹配元素组成的`HTMLCollection`对象
+
+`element = baseElement.querySelector(selectors) `返回基准元素下，选择器匹配到的元素集合中的第一个元素,实际匹配过程是创建一个匹配元素的初始列表，然后判断每个元素是否为基准元素的后代元素，第一个属于基准元素的后代元素将会被返回
+
+`elementList = baseElement.querySelectorAll(selectors)`, 返回一个`NodeList`的集合
 
 :::
 
@@ -34,6 +37,9 @@ console.log(oBox) // HTMLCollection
 console.log(oSpan)
 console.log(box)
 console.log(allBox) // NodeList
+
+var all = document.getElementsByTagName('*')
+console.log(all)
 ```
 
 ## 2. HTMLCollection和NodeList对象
@@ -57,7 +63,7 @@ console.log(divs.length)
 
 ## 3. 节点和元素
 
-节点具有多种类型：比如`元素节点/ 属性节点/文本节点/注释节点`
+节点具有多种类型：比如`元素节点（1）/ 属性节点（2）/ 文本节点（3）/ 注释节点（8）/ document（9）/ documentFragment（11）`
 
 - `parentNode`: 某节点的父节点, 直到找到`document`为止，`        body -> html -> document -> null`
 - `childNodes`: 某节点的全部子节点
@@ -71,7 +77,57 @@ console.log(divs.length)
 - `firstElementChild/lastElementChild `: IE9以下不支持，表示第一个和最后一个子元素
 - `nextElementSibling/previousElementSibling `: IE9以下不支持，表示下一个和上一个元素
 
+节点的属性：
+
+- nodeName: 元素节点的属性是大写形式，只读
+- nodeValue: 属性节点/文本节点/注释节点可以使用，是可写的
+- nodeType: 根据数值来判断是哪种类型的节点，不可以修改
+
+```js
+// 重写elemChildren, 获取某个节点的子元素节点
+function elemChildren(node) {
+    var temp = {
+        length: 0,
+     		// 继承splice方法，会表现出数组的形式
+        splice: Array.prototype.splice,
+        push: Array.prototype.push
+    }
+    var children = node.childNodes
+    for(var i = 0; i < children.length; i++) {
+        var childItem = children[i]
+        if (childItem.nodeType === 1) {
+            // temp[temp['length']] = childItem
+            // temp['length']++
+            temp.push(childItem)
+        }
+    }
+    return temp
+}
+```
+
+获取属性节点: 可以通过`attributes`或者`getAttributeNode`来获取
+
+```js
+console.log(oDiv.getAttributeNode('id').value)
+console.log(oDiv.attributes[0].nodeValue)
+```
+
+判断某个节点是否有子节点：`ele.hasChildNodes()`
+
+## 3. DOM结构树
+
+![image-20230823225420019](../pics/image-20230823225420019.png)
+
+我们可以用过`document`访问`getElementById/getElementByName`方法，那是因为`document`会沿着`HTMLDocument.prototype -> Document.prototype`的原型链查找
+
+同样的，元素也可以访问`getElementsByTagName/getElementsByClassName/querySelector/querySelectorAll`这几个方法，这是因为他们在`Document/Element.prototype`上都有实现。
+
+那`Node.__proto__`指向哪里呢，指向`EventTarget.prototype`, 直到找到原型链的顶端为止。
+
+
+
 ## 3. DOM操作
+
 ### 1.  增加节点
 ```javascript
 // 新创建一个元素节点
@@ -120,6 +176,7 @@ element.innerHTML = '新设置的内容'
 ## 4. 事件流
 事件流描述的是从页面中接收事件的顺序，事件发生后会在目标节点和根节点之间按照特定的顺序传播，路径经过的节点都会接受到事件 
 **一个完整的事件流实际上包含了3个阶段，事件捕获阶段 ---> 事件目标阶段 ---> 事件冒泡阶段**
+
 ```
 事件捕获阶段的主要表现是不具体的节点先接受事件，然后逐级向下传递，最具体的节点最后收到事件
 事件目标阶段表示事件刚好传播到用户产生行为的元素上，可能是事件捕获的最后一个阶段，也可能是事件冒泡的第一个阶段
