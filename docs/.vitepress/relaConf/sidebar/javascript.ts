@@ -55,11 +55,15 @@ export const JsSidebar = [
         ]
     },
     {
-        text: 'DOM',
+        text: 'DOM与事件',
         items: [
             {
-                text: 'DOM与事件',
-                link: '/column/JavaScript/DOM与事件'
+                text: 'DOM',
+                link: '/column/JavaScript/DOM'
+            },
+            {
+                text: '事件',
+                link: '/column/JavaScript/事件'
             },
         ]
     },
