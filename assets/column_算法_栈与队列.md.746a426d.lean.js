@@ -1,0 +1,1 @@
+import{_ as t,v as e,b as a}from"./chunks/framework.e2f4824a.js";const p=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"column/算法/栈与队列.md","filePath":"column/算法/栈与队列.md"}'),s={name:"column/算法/栈与队列.md"};function r(n,o,_,c,m,d){return e(),a("div")}const f=t(s,[["render",r]]);export{p as __pageData,f as default};
