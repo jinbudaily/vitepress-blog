@@ -18,7 +18,7 @@ export const nav: DefaultTheme.NavItem[] = [
     items: [
       {
         text: '计算机网络',
-        link: '/column/计算机网络/' // 对应docs/column/Algorithm下的index.md文件
+        link: '/column/Network/',
       }
     ]
   },
@@ -40,7 +40,7 @@ export const nav: DefaultTheme.NavItem[] = [
       },
       {
         text: '语雀知识花园',
-        link: 'https://www.yuque.com/alipayqvfd0cfvgl'
+        link: 'https://www.yuque.com/lijinbudaily'
       }
     ]
   }
